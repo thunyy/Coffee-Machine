@@ -23,35 +23,57 @@ MENU = {
         "cost": 3.0,
     }
 }
-
+profit = 0
 resources = {
     "water": 300,
     "milk": 200,
     "coffee": 100,
 }
 
-money = 0
+# Function to check if operating
+def operating(order):
+    return order != "off"
 
-# todo 1 ask customer
+# Function to check resources
+def check_resource(order):
+    for each_ingredient in MENU[order]["ingredients"]:
+        if resources[each_ingredient] < MENU[order]["ingredients"][each_ingredient]:
+            print(f"Sorry, there is not enough {each_ingredient}.")
+            return False
+    return True
 
-order = input("what would you like to order :(espresso/latte/cappuccino)")
+# Function to make coffee
+def coffee_making(order):
+    for i in MENU[order]["ingredients"]:
+        resources[i] -= MENU[order]["ingredients"][i]
 
+# Process coins
+def process_coin(order):
+    print("Please insert coins.")
+    total = int(input("How many quarters?: ")) * 0.25
+    total += int(input("How many dimes?: ")) * 0.1
+    total += int(input("How many nickels?: ")) * 0.05
+    total += int(input("How many pennies?: ")) * 0.01
 
-# todo 2 off to shut down
-# if order == "off":
-#     break
+    if total >= MENU[order]["cost"]:
+        global profit
+        profit += MENU[order]["cost"]
+        change = round(total - MENU[order]["cost"], 2)
+        print(f"Here is ${change} in change.")
+    else:
+        print("Sorry, that's not enough money. Money refunded.")
+        exit()
 
-# todo 3 create def report
-def print_report():
-    print(f"water:{'water'} ml\n milk:{'milk'} ml\n coffee:{'coffee'}g \n {'money'}")
-# todo 4 print money
+# Main loop
+while True:
+    order = input("What would you like to order? (espresso/latte/cappuccino): ").lower()
 
-# todo 5 check resource def??
+    if not operating(order):
+        break
 
-def check_resource():
-    # check order menu recipe then access the ingredient then compare with the menu recipe
-    # access the number of ingredient correctly
-    count_ingredients = len(MENU[order]["ingredients"])
-    for i in count_ingredients:
-
-      MENU[order]["ingredients"]
+    if order == "report":
+        print(f"Water: {resources['water']} ml\nMilk: {resources['milk']} ml\nCoffee: {resources['coffee']}g\nMoney: ${profit}")
+    elif check_resource(order):
+        process_coin(order)
+        coffee_making(order)
+        print(f"Here is your {order}, enjoy!")
